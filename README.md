@@ -55,6 +55,10 @@ This repository showcases different state management approaches in Flutter throu
     - Crazy name, but it's a custom MVVM implementation
     - Demonstrates architectural principles
 
+12. **Very Simple State Manager** (`very_simple_state_manager`)
+    - Simple and efficient state management (created by me!)
+    - Aptly named!
+
 ## 🚀 Getting Started
 
 ### Prerequisites
