@@ -6,6 +6,6 @@ part 'weather_repository_provider.g.dart';
 
 @riverpod
 WeatherRepository weatherRepository(Ref ref) {
-  const apiKey = const String.fromEnvironment('WEATHER_API_KEY');
+  const apiKey = String.fromEnvironment('WEATHER_API_KEY');
   return WeatherRepository(apiKey);
 }
