@@ -1,0 +1,22 @@
+name: weather_custom_mvvm_app
+description: "A new Flutter project."
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.6.0
+
+dependencies:
+  cupertino_icons: ^1.0.8
+  flutter:
+    sdk: flutter
+  flutter_keyboard_visibility: ^6.0.0
+  my_own_mvvm_with_dependency_injection_blackjack_and_hookers: ^1.1.0+3
+  weather_repository:
+    path: ../../packages/weather_repository
+
+dev_dependencies:
+  flutter_lints: ^5.0.0
+  flutter_test:
+    sdk: flutter

@@ -1,0 +1,12 @@
+name: state_management_demo
+description: A monorepo demonstrating various state management approaches in Flutter
+
+environment:
+  sdk: ">=3.6.0"
+  flutter: ">=3.27.1"
+
+dev_dependencies:
+  melos: ^6.2.0
+
+workspace:
+  - packages/weather_repository

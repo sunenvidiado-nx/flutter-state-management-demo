@@ -1,0 +1,4 @@
+# melos_managed_dependency_overrides: weather_repository
+dependency_overrides:
+  weather_repository:
+    path: ../../packages/weather_repository

@@ -1,0 +1,36 @@
+name: state_management_demo
+
+packages:
+  - apps/**
+  - packages/**
+
+environment:
+  sdk: ">=3.6.0"
+
+command:
+  bootstrap:
+    usePubspecOverride: true
+
+  environment:
+    sdk: ">=3.6.0"
+    flutter: ">=3.27.1"
+
+  dependencies:
+    flutter_keyboard_visibility: ^6.0.0
+
+  dev_dependencies:
+    flutter_lints: ^5.0.0
+
+scripts:
+  clean:all:
+    exec: flutter clean && flutter pub get
+
+  build_runner:all:
+    exec: flutter pub run build_runner build
+
+  get:all:
+    exec: flutter pub get
+
+dependency_overrides:
+  weather_repository:
+    path: packages/weather_repository
