@@ -11,7 +11,7 @@ void main() {
       () => WeatherRepository(const String.fromEnvironment('WEATHER_API_KEY')));
 
   // Register view model
-  di.registerFactory(() => WeatherViewModel(di()));
+  di.registerLazySingleton(() => WeatherViewModel(di()));
 
   runApp(const WeatherApp());
 }
