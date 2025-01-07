@@ -66,7 +66,7 @@ This repository showcases different state management approaches in Flutter throu
 1. Clone the repository:
    ```bash
    git clone https://github.com/sunenvidiado-nx/flutter-state-management-demo.git
-   cd state_management_demo
+   cd flutter-state-management-demo
    ```
 
 2. Set up Flutter version:
@@ -84,7 +84,7 @@ This repository showcases different state management approaches in Flutter throu
 ## 📚 Project Structure
 
 ```
-state_management_demo/
+flutter-state-management-demo/
 ├── apps/
 │   ├── weather_set_state_app/
 │   ├── weather_change_notifier_app/
