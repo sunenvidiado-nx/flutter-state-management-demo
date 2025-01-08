@@ -12,7 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_keyboard_visibility: ^6.0.0
-  very_simple_state_manager: ^1.0.0+1
+  very_simple_state_manager: ^1.2.0+2
   weather_repository:
     path: ../../packages/weather_repository
 
