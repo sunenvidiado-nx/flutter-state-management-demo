@@ -18,8 +18,11 @@ class WeatherApp extends StatelessWidget {
         colorScheme: const ColorScheme.light(),
         useMaterial3: true,
       ),
-      builder: (context, child) => KeyboardDismissOnTap(child: child!),
       home: const WeatherPage(),
+      builder: (context, child) => KeyboardDismissOnTap(
+        dismissOnCapturedTaps: true,
+        child: child!,
+      ),
     );
   }
 }

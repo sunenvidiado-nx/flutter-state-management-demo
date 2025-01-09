@@ -21,7 +21,10 @@ class WeatherApp extends StatelessWidget {
         colorScheme: const ColorScheme.light(),
         useMaterial3: true,
       ),
-      builder: (context, child) => KeyboardDismissOnTap(child: child!),
+      builder: (context, child) => KeyboardDismissOnTap(
+        dismissOnCapturedTaps: true,
+        child: child!,
+      ),
       home: StoreProvider(
         store: Store<WeatherState>(
           initialState: const WeatherState(),
