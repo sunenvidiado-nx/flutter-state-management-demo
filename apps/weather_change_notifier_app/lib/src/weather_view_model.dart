@@ -2,14 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:weather_repository/weather_repository.dart';
 
 class WeatherViewModel extends ChangeNotifier {
-  // In a production app, you would want to use a proper dependency injection
-  // framework to provide the [WeatherRepository] instance to this class.
-  // For simplicity, we're creating it directly in the constructor here.
-  WeatherViewModel()
-      : _repository =
-            WeatherRepository(const String.fromEnvironment('WEATHER_API_KEY'));
+  WeatherViewModel();
 
-  final WeatherRepository _repository;
+  // Typically, you would use a dependency injection framework like GetIt.
+  final _repository = WeatherRepository(
+    const String.fromEnvironment('WEATHER_API_KEY'),
+  );
 
   Weather? _weather;
   Weather? get weather => _weather;
