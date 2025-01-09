@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:weather_repository/weather_repository.dart';
-import 'package:weather_value_notifier_app/src/weather_view_model.dart';
 
 class WeatherPage extends StatefulWidget {
   const WeatherPage({super.key});
@@ -12,20 +11,35 @@ class WeatherPage extends StatefulWidget {
 class _WeatherPageState extends State<WeatherPage> {
   final _controller = TextEditingController(text: 'Manila');
   final _focusNode = FocusNode();
-  final _viewModel = WeatherViewModel();
+  final _weatherRepository =
+      WeatherRepository(const String.fromEnvironment('WEATHER_API_KEY'));
+
+  late final _weatherNotifier = ValueNotifier<Weather?>(null);
+  late final _isLoadingNotifier = ValueNotifier(false);
 
   @override
   void initState() {
     super.initState();
-    _viewModel.fetchWeather(_controller.text);
+    _fetchWeather(_controller.text);
   }
 
   @override
   void dispose() {
     _controller.dispose();
     _focusNode.dispose();
-    _viewModel.dispose();
+    _weatherNotifier.dispose();
+    _isLoadingNotifier.dispose();
     super.dispose();
+  }
+
+  Future<void> _fetchWeather(String location) async {
+    _isLoadingNotifier.value = true;
+    try {
+      final weather = await _weatherRepository.getWeather(location);
+      _weatherNotifier.value = weather;
+    } finally {
+      _isLoadingNotifier.value = false;
+    }
   }
 
   @override
@@ -56,28 +70,36 @@ class _WeatherPageState extends State<WeatherPage> {
         cursorColor: Colors.blueAccent,
         backgroundCursorColor: Colors.black,
         textAlign: TextAlign.center,
-        onSubmitted: _viewModel.fetchWeather,
+        onSubmitted: _fetchWeather,
       ),
     );
   }
 
-  Widget _buildWeatherCondition() {
+  Widget _loadingWrapper(
+    Widget Function(BuildContext, bool, Weather?) builder,
+  ) {
     return ValueListenableBuilder<bool>(
-      valueListenable: _viewModel.loadingNotifier,
-      builder: (context, loading, child) {
+      valueListenable: _isLoadingNotifier,
+      builder: (context, isLoading, _) {
         return ValueListenableBuilder<Weather?>(
-          valueListenable: _viewModel.weatherNotifier,
-          builder: (context, weather, child) {
-            return AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
-              child: switch (weather) {
-                final Weather? _ when loading => Center(
-                    child: Text(
-                      'Fetching...',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                  ),
-                final Weather weather when !loading => Center(
+          valueListenable: _weatherNotifier,
+          builder: (context, weather, _) {
+            return builder(context, isLoading, weather);
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildWeatherCondition() {
+    return _loadingWrapper(
+      (context, isLoading, weather) => AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        child: isLoading
+            ? Text('Fetching...', style: Theme.of(context).textTheme.titleLarge)
+            : weather == null
+                ? const SizedBox.shrink()
+                : Center(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -95,111 +117,69 @@ class _WeatherPageState extends State<WeatherPage> {
                       ],
                     ),
                   ),
-                _ => const SizedBox.shrink(),
-              },
-            );
-          },
-        );
-      },
+      ),
     );
   }
 
   Widget _buildTemperatureDisplay() {
-    return ValueListenableBuilder<bool>(
-      valueListenable: _viewModel.loadingNotifier,
-      builder: (context, loading, child) {
-        return ValueListenableBuilder<Weather?>(
-          valueListenable: _viewModel.weatherNotifier,
-          builder: (context, weather, child) {
-            return Column(
-              children: [
-                Center(
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 300),
-                    child: Text(
-                      key: ValueKey(weather),
-                      switch (weather) {
-                        final Weather? _ when loading => '...',
-                        final Weather weather when !loading =>
-                          '${weather.current.tempC.toInt()}°',
-                        _ => '',
-                      },
-                      style: Theme.of(context)
-                          .textTheme
-                          .displayLarge
-                          ?.copyWith(fontSize: 180, color: Colors.black87),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Center(
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 300),
-                    child: Text(
-                      key: ValueKey(weather),
-                      switch (weather) {
-                        final Weather? _ when loading => '...',
-                        final Weather weather when !loading =>
-                          'Feels like ${weather.current.feelsLikeC.toInt()}°',
-                        _ => '',
-                      },
-                      style: Theme.of(context).textTheme.headlineLarge,
-                    ),
-                  ),
-                ),
-              ],
-            );
-          },
-        );
-      },
+    return _loadingWrapper(
+      (context, isLoading, weather) => Column(
+        children: [
+          Center(
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: Text(
+                key: ValueKey(weather),
+                isLoading ? '...' : '${weather!.current.tempC.toInt()}°',
+                style: Theme.of(context)
+                    .textTheme
+                    .displayLarge
+                    ?.copyWith(fontSize: 180, color: Colors.black87),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Center(
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: Text(
+                key: ValueKey(weather),
+                isLoading
+                    ? '...'
+                    : 'Feels like ${weather!.current.feelsLikeC.toInt()}°',
+                style: Theme.of(context).textTheme.headlineLarge,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildWeatherDetails() {
-    return ValueListenableBuilder(
-      valueListenable: _viewModel.loadingNotifier,
-      builder: (context, loading, child) {
-        return ValueListenableBuilder(
-          valueListenable: _viewModel.weatherNotifier,
-          builder: (context, weather, child) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildDetailItem(
-                    icon: Icons.opacity_outlined,
-                    value: switch (weather) {
-                      final Weather? _ when loading => '...',
-                      final Weather weather when !loading =>
-                        '${weather.current.humidity}%',
-                      _ => '',
-                    },
-                  ),
-                  _buildDetailItem(
-                    icon: Icons.air,
-                    value: switch (weather) {
-                      final Weather? _ when loading => '...',
-                      final Weather weather when !loading =>
-                        '${weather.current.windKph.toInt()} km/h',
-                      _ => '',
-                    },
-                  ),
-                  _buildDetailItem(
-                    icon: Icons.wb_sunny_outlined,
-                    value: switch (weather) {
-                      final Weather? _ when loading => '...',
-                      final Weather weather when !loading =>
-                        '${weather.current.uv} UV',
-                      _ => '',
-                    },
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
+    return _loadingWrapper(
+      (context, isLoading, weather) => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _buildDetailItem(
+              icon: Icons.opacity_outlined,
+              value: isLoading ? '...' : '${weather!.current.humidity}%',
+            ),
+            _buildDetailItem(
+              icon: Icons.air,
+              value: isLoading
+                  ? '...'
+                  : '${weather!.current.windKph.toInt()} km/h',
+            ),
+            _buildDetailItem(
+              icon: Icons.wb_sunny_outlined,
+              value: isLoading ? '...' : '${weather!.current.uv} UV',
+            ),
+          ],
+        ),
+      ),
     );
   }
 
