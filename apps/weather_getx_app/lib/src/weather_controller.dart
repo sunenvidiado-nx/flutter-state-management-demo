@@ -7,7 +7,7 @@ class WeatherController extends GetxController {
   final WeatherRepository _weatherRepository;
 
   final weather = Rx<Weather?>(null);
-  final loading = false.obs;
+  final loading = false.obs; // Or Rx<bool>(false) or RxBool(false)
 
   Future<void> fetchWeather(String location) async {
     loading.value = true;

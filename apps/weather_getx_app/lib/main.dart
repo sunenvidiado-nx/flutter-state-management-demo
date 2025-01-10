@@ -6,6 +6,10 @@ import 'package:weather_getx_app/src/weather_page.dart';
 import 'package:weather_repository/weather_repository.dart';
 
 void main() {
+  Get.put( // Register WeatherRepository
+    WeatherRepository(const String.fromEnvironment('WEATHER_API_KEY')),
+  );
+
   runApp(const WeatherApp());
 }
 
@@ -14,8 +18,6 @@ class WeatherApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Get.put(WeatherRepository(const String.fromEnvironment('WEATHER_API_KEY')));
-
     return GetMaterialApp(
       title: 'Weather app',
       theme: ThemeData(
