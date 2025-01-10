@@ -14,7 +14,7 @@ class _WeatherPageState extends State<WeatherPage> {
   final _controller = TextEditingController(text: 'Manila');
   final _focusNode = FocusNode();
 
-  final _weatherController = Get.find<WeatherController>();
+  late final _weatherController = Get.put(WeatherController()); // Initialize
 
   @override
   void initState() {
@@ -26,6 +26,7 @@ class _WeatherPageState extends State<WeatherPage> {
   void dispose() {
     _controller.dispose();
     _focusNode.dispose();
+    Get.delete<WeatherController>(); // Clean up
     super.dispose();
   }
 
