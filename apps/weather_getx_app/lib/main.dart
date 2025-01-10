@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
-import 'package:weather_getx_app/src/weather_controller.dart';
-import 'package:weather_getx_app/src/weather_page.dart';
 import 'package:weather_repository/weather_repository.dart';
 
+import 'src/weather_page.dart';
+
 void main() {
-  Get.put( // Register WeatherRepository
-    WeatherRepository(const String.fromEnvironment('WEATHER_API_KEY')),
+  // Register weather repository as lazy singleton
+  Get.lazyPut(
+    () => WeatherRepository(const String.fromEnvironment('WEATHER_API_KEY')),
   );
 
   runApp(const WeatherApp());
@@ -28,10 +29,12 @@ class WeatherApp extends StatelessWidget {
         dismissOnCapturedTaps: true,
         child: child!,
       ),
-      home: GetBuilder<WeatherController>(
-        init: WeatherController(Get.find<WeatherRepository>()),
-        builder: (controller) => const WeatherPage(),
-      ),
+      getPages: [
+        GetPage(
+          name: '/',
+          page: () => const WeatherPage(),
+        ),
+      ],
     );
   }
 }
