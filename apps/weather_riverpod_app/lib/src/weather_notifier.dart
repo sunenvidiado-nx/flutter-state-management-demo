@@ -1,6 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:weather_repository/weather_repository.dart';
-import 'package:weather_riverpod_app/src/weather_repository_provider.dart';
+
+import 'weather_repository_provider.dart';
 
 part 'weather_notifier.g.dart';
 
