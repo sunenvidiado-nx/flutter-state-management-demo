@@ -2,9 +2,9 @@ import 'package:get/get.dart';
 import 'package:weather_repository/weather_repository.dart';
 
 class WeatherController extends GetxController {
-  WeatherController(this._weatherRepository);
+  WeatherController();
 
-  final WeatherRepository _weatherRepository;
+  final _weatherRepository = Get.find<WeatherRepository>();
 
   final weather = Rx<Weather?>(null);
   final loading = false.obs; // Or Rx<bool>(false) or RxBool(false)
