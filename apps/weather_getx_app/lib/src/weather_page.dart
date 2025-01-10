@@ -67,25 +67,23 @@ class _WeatherPageState extends State<WeatherPage> {
     return Obx(() {
       return AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
-        child: _weatherController.loading.value
+        child: _weatherController.loading
             ? Text(
                 'Fetching...',
                 style: Theme.of(context).textTheme.titleLarge,
               )
-            : _weatherController.weather.value != null
+            : _weatherController.weather != null
                 ? Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image.network(
-                        _weatherController
-                            .weather.value!.current.condition.imageUrl,
+                        _weatherController.weather!.current.condition.imageUrl,
                         width: 52,
                         height: 52,
                         fit: BoxFit.contain,
                       ),
                       Text(
-                        _weatherController
-                            .weather.value!.current.condition.text,
+                        _weatherController.weather!.current.condition.text,
                         style: Theme.of(context).textTheme.titleLarge,
                       )
                     ],
@@ -103,10 +101,10 @@ class _WeatherPageState extends State<WeatherPage> {
             return AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
               child: Text(
-                key: ValueKey(_weatherController.weather.value),
-                _weatherController.weather.value != null &&
-                        !_weatherController.loading.value
-                    ? '${_weatherController.weather.value!.current.tempC.toInt()}°'
+                key: ValueKey(_weatherController.weather),
+                _weatherController.weather != null &&
+                        !_weatherController.loading
+                    ? '${_weatherController.weather!.current.tempC.toInt()}°'
                     : '...',
                 style: Theme.of(context)
                     .textTheme
@@ -122,9 +120,9 @@ class _WeatherPageState extends State<WeatherPage> {
             return AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
               child: Text(
-                key: ValueKey(_weatherController.weather.value),
-                _weatherController.weather.value != null
-                    ? 'Feels like ${_weatherController.weather.value!.current.feelsLikeC.toInt()}°'
+                key: ValueKey(_weatherController.weather),
+                _weatherController.weather != null
+                    ? 'Feels like ${_weatherController.weather!.current.feelsLikeC.toInt()}°'
                     : 'Fetching...',
                 style: Theme.of(context).textTheme.headlineLarge,
               ),
@@ -163,7 +161,7 @@ class _WeatherPageState extends State<WeatherPage> {
     required String Function(Weather) valueBuilder,
   }) {
     return Obx(() {
-      final weather = _weatherController.weather.value;
+      final weather = _weatherController.weather;
 
       return Column(
         children: [
