@@ -36,10 +36,10 @@ class _WeatherPageState extends State<WeatherPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(height: 32),
-            Observer(builder: _buildWeatherCondition),
-            Observer(builder: _buildTemperatureDisplay),
+            _buildWeatherCondition(context),
+            _buildTemperatureDisplay(context),
             const SizedBox(height: 64),
-            Observer(builder: _buildWeatherDetails),
+            _buildWeatherDetails(context),
           ],
         ),
       ),
@@ -61,96 +61,102 @@ class _WeatherPageState extends State<WeatherPage> {
   }
 
   Widget _buildWeatherCondition(BuildContext context) {
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 300),
-      child: _store.isLoading
-          ? SizedBox(
-              height: 52,
-              child: Text(
-                'Fetching...',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-            )
-          : Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.network(
-                  _store.weather!.current.condition.imageUrl,
-                  width: 52,
-                  height: 52,
-                  fit: BoxFit.contain,
-                ),
-                Text(
-                  _store.weather!.current.condition.text,
+    return Observer(
+      builder: (context) => AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        child: _store.isLoading
+            ? SizedBox(
+                height: 52,
+                child: Text(
+                  'Fetching...',
                   style: Theme.of(context).textTheme.titleLarge,
-                )
-              ],
-            ),
+                ),
+              )
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.network(
+                    _store.weather!.current.condition.imageUrl,
+                    width: 52,
+                    height: 52,
+                    fit: BoxFit.contain,
+                  ),
+                  Text(
+                    _store.weather!.current.condition.text,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  )
+                ],
+              ),
+      ),
     );
   }
 
   Widget _buildTemperatureDisplay(BuildContext context) {
-    return Column(
-      children: [
-        Center(
-          child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            child: Text(
-              key: ValueKey(_store.weather),
-              _store.isLoading
-                  ? '...'
-                  : '${_store.weather!.current.tempC.toInt()}°',
-              style: Theme.of(context)
-                  .textTheme
-                  .displayLarge
-                  ?.copyWith(fontSize: 180, color: Colors.black87),
+    return Observer(
+      builder: (context) => Column(
+        children: [
+          Center(
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: Text(
+                key: ValueKey(_store.weather),
+                _store.isLoading
+                    ? '...'
+                    : '${_store.weather!.current.tempC.toInt()}°',
+                style: Theme.of(context)
+                    .textTheme
+                    .displayLarge
+                    ?.copyWith(fontSize: 180, color: Colors.black87),
+              ),
             ),
           ),
-        ),
-        const SizedBox(height: 16),
-        Center(
-          child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            child: Text(
-              key: ValueKey(_store.weather),
-              _store.isLoading
-                  ? '...'
-                  : 'Feels like ${_store.weather!.current.feelsLikeC.toInt()}°',
-              style: Theme.of(context).textTheme.headlineLarge,
+          const SizedBox(height: 16),
+          Center(
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: Text(
+                key: ValueKey(_store.weather),
+                _store.isLoading
+                    ? '...'
+                    : 'Feels like ${_store.weather!.current.feelsLikeC.toInt()}°',
+                style: Theme.of(context).textTheme.headlineLarge,
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
   Widget _buildWeatherDetails(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          _buildDetailItem(
-            context: context,
-            icon: Icons.opacity_outlined,
-            value: _store.isLoading
-                ? '...'
-                : '${_store.weather!.current.humidity}%',
-          ),
-          _buildDetailItem(
-            context: context,
-            icon: Icons.air,
-            value: _store.isLoading
-                ? '...'
-                : '${_store.weather!.current.windKph.toInt()} km/h',
-          ),
-          _buildDetailItem(
-            context: context,
-            icon: Icons.wb_sunny_outlined,
-            value:
-                _store.isLoading ? '...' : '${_store.weather!.current.uv} UV',
-          ),
-        ],
+    return Observer(
+      builder: (context) => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _buildDetailItem(
+              context: context,
+              icon: Icons.opacity_outlined,
+              value: _store.isLoading
+                  ? '...'
+                  : '${_store.weather!.current.humidity}%',
+            ),
+            _buildDetailItem(
+              context: context,
+              icon: Icons.air,
+              value: _store.isLoading
+                  ? '...'
+                  : '${_store.weather!.current.windKph.toInt()} km/h',
+            ),
+            _buildDetailItem(
+              context: context,
+              icon: Icons.wb_sunny_outlined,
+              value:
+                  _store.isLoading ? '...' : '${_store.weather!.current.uv} UV',
+            ),
+          ],
+        ),
       ),
     );
   }
