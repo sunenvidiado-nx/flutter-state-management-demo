@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:async_redux/async_redux.dart';
 import 'package:weather_async_redux_app/src/weather_actions.dart';
 import 'weather_state.dart';
-import 'weather_view_model.dart';
 
 class WeatherPage extends StatefulWidget {
   const WeatherPage({super.key});
@@ -16,6 +15,14 @@ class _WeatherPageState extends State<WeatherPage> {
   final _focusNode = FocusNode();
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.dispatch(FetchWeatherAction(location: _controller.text));
+    });
+  }
+
+  @override
   void dispose() {
     _controller.dispose();
     _focusNode.dispose();
@@ -24,22 +31,20 @@ class _WeatherPageState extends State<WeatherPage> {
 
   @override
   Widget build(BuildContext context) {
-    return StoreConnector<WeatherState, WeatherViewModel>(
-      vm: () => WeatherFactory(),
-      onInit: (store) =>
-          store.dispatch(FetchWeatherAction(location: _controller.text)),
-      builder: (context, vm) {
+    return StoreConnector<WeatherState, WeatherState>(
+      converter: (store) => store.state,
+      builder: (context, state) {
         return Scaffold(
-          appBar: _buildAppBar(vm),
+          appBar: _buildAppBar(),
           body: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 32),
-                _buildWeatherCondition(vm),
-                _buildTemperatureDisplay(vm),
+                _buildWeatherCondition(),
+                _buildTemperatureDisplay(),
                 const SizedBox(height: 64),
-                _buildWeatherDetails(vm),
+                _buildWeatherDetails(),
               ],
             ),
           ),
@@ -48,7 +53,7 @@ class _WeatherPageState extends State<WeatherPage> {
     );
   }
 
-  PreferredSizeWidget _buildAppBar(WeatherViewModel vm) {
+  PreferredSizeWidget _buildAppBar() {
     return AppBar(
       title: EditableText(
         controller: _controller,
@@ -57,15 +62,18 @@ class _WeatherPageState extends State<WeatherPage> {
         cursorColor: Colors.blueAccent,
         backgroundCursorColor: Colors.black,
         textAlign: TextAlign.center,
-        onSubmitted: vm.onLocationSubmitted,
+        onSubmitted: (value) =>
+            context.dispatch(FetchWeatherAction(location: value)),
       ),
     );
   }
 
-  Widget _buildWeatherCondition(WeatherViewModel vm) {
+  Widget _buildWeatherCondition() {
+    final state = context.getState<WeatherState>();
+
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 300),
-      child: vm.isLoading
+      child: state.isLoading
           ? SizedBox(
               height: 52,
               child: Text(
@@ -73,19 +81,19 @@ class _WeatherPageState extends State<WeatherPage> {
                 style: Theme.of(context).textTheme.titleLarge,
               ),
             )
-          : vm.weather == null
+          : state.weather == null
               ? const SizedBox.shrink()
               : Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image.network(
-                      vm.weather!.current.condition.imageUrl,
+                      state.weather!.current.condition.imageUrl,
                       width: 52,
                       height: 52,
                       fit: BoxFit.contain,
                     ),
                     Text(
-                      vm.weather!.current.condition.text,
+                      state.weather!.current.condition.text,
                       style: Theme.of(context).textTheme.titleLarge,
                     )
                   ],
@@ -93,19 +101,21 @@ class _WeatherPageState extends State<WeatherPage> {
     );
   }
 
-  Widget _buildTemperatureDisplay(WeatherViewModel vm) {
+  Widget _buildTemperatureDisplay() {
+    final state = context.getState<WeatherState>();
+
     return Column(
       children: [
         Center(
           child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
             child: Text(
-              key: ValueKey(vm.weather),
-              vm.isLoading
+              key: ValueKey(state.weather),
+              state.isLoading
                   ? '...'
-                  : vm.weather == null
+                  : state.weather == null
                       ? ''
-                      : '${vm.weather!.current.tempC.toInt()}°',
+                      : '${state.weather!.current.tempC.toInt()}°',
               style: Theme.of(context)
                   .textTheme
                   .displayLarge
@@ -118,12 +128,12 @@ class _WeatherPageState extends State<WeatherPage> {
           child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
             child: Text(
-              key: ValueKey(vm.weather),
-              vm.isLoading
+              key: ValueKey(state.weather),
+              state.isLoading
                   ? '...'
-                  : vm.weather == null
+                  : state.weather == null
                       ? ''
-                      : 'Feels like ${vm.weather!.current.feelsLikeC.toInt()}°',
+                      : 'Feels like ${state.weather!.current.feelsLikeC.toInt()}°',
               style: Theme.of(context).textTheme.headlineLarge,
             ),
           ),
@@ -132,8 +142,10 @@ class _WeatherPageState extends State<WeatherPage> {
     );
   }
 
-  Widget _buildWeatherDetails(WeatherViewModel vm) {
-    if (vm.weather == null && !vm.isLoading) {
+  Widget _buildWeatherDetails() {
+    final state = context.getState<WeatherState>();
+
+    if (state.weather == null && !state.isLoading) {
       return const SizedBox.shrink();
     }
 
@@ -144,17 +156,18 @@ class _WeatherPageState extends State<WeatherPage> {
         children: [
           _buildDetailItem(
             icon: Icons.opacity_outlined,
-            value: vm.isLoading ? '...' : '${vm.weather!.current.humidity}%',
+            value:
+                state.isLoading ? '...' : '${state.weather!.current.humidity}%',
           ),
           _buildDetailItem(
             icon: Icons.air,
-            value: vm.isLoading
+            value: state.isLoading
                 ? '...'
-                : '${vm.weather!.current.windKph.toInt()} km/h',
+                : '${state.weather!.current.windKph.toInt()} km/h',
           ),
           _buildDetailItem(
             icon: Icons.wb_sunny_outlined,
-            value: vm.isLoading ? '...' : '${vm.weather!.current.uv} UV',
+            value: state.isLoading ? '...' : '${state.weather!.current.uv} UV',
           ),
         ],
       ),
