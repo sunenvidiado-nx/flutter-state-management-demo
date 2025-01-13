@@ -31,25 +31,20 @@ class _WeatherPageState extends State<WeatherPage> {
 
   @override
   Widget build(BuildContext context) {
-    return StoreConnector(
-      converter: (Store<WeatherState> store) => store.state,
-      builder: (context, state) {
-        return Scaffold(
-          appBar: _buildAppBar(),
-          body: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(height: 32),
-                _buildWeatherCondition(),
-                _buildTemperatureDisplay(),
-                const SizedBox(height: 64),
-                _buildWeatherDetails(),
-              ],
-            ),
-          ),
-        );
-      },
+    return Scaffold(
+      appBar: _buildAppBar(),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(height: 32),
+            _buildWeatherCondition(),
+            _buildTemperatureDisplay(),
+            const SizedBox(height: 64),
+            _buildWeatherDetails(),
+          ],
+        ),
+      ),
     );
   }
 
