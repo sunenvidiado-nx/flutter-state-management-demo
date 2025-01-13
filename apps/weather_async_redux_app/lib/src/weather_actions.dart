@@ -11,14 +11,15 @@ class FetchWeatherAction extends ReduxAction<WeatherState> {
       prop<WeatherRepository>('weatherRepository');
 
   @override
-  Future<WeatherState?> reduce() async {
-    try {
-      dispatch(SetLoadingAction(isLoading: true));
-      final weather = await _repository.getWeather(location);
-      return state.copyWith(weather: weather, isLoading: false);
-    } finally {
-      dispatch(SetLoadingAction(isLoading: false));
-    }
+  Future<WeatherState> reduce() async {
+    // Actions can dispatch other actions
+    dispatch(SetLoadingAction(isLoading: true));
+
+    final weather = await _repository.getWeather(location);
+
+    dispatch(SetLoadingAction(isLoading: false));
+
+    return state.copyWith(weather: weather);
   }
 }
 
