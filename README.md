@@ -69,13 +69,7 @@ This repository showcases different state management approaches in Flutter throu
    cd flutter-state-management-demo
    ```
 
-2. Set up Flutter version:
-   ```bash
-   fvm install 3.27.1
-   fvm use 3.27.1
-   ```
-
-3. Run any app using VS Code launch configurations or via command line:
+2. Run any app using VS Code launch configurations or via command line:
    ```bash
    cd apps/[app_name]
    flutter run --dart-define WEATHER_API_KEY=your_api_key_here
