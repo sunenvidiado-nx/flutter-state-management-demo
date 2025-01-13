@@ -26,7 +26,7 @@ class WeatherApp extends StatelessWidget {
         child: child!,
       ),
       home: StoreProvider(
-        store: Store<WeatherState>(
+        store: Store(
           initialState: const WeatherState(),
           props: {
             'weatherRepository': WeatherRepository(

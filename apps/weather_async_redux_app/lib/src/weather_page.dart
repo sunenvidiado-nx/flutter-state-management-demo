@@ -31,8 +31,8 @@ class _WeatherPageState extends State<WeatherPage> {
 
   @override
   Widget build(BuildContext context) {
-    return StoreConnector<WeatherState, WeatherState>(
-      converter: (store) => store.state,
+    return StoreConnector(
+      converter: (Store<WeatherState> store) => store.state,
       builder: (context, state) {
         return Scaffold(
           appBar: _buildAppBar(),
