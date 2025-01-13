@@ -7,11 +7,14 @@ import 'package:weather_watch_it_app/src/weather_view_model.dart';
 
 void main() {
   // Register repository
-  di.registerLazySingleton(
-      () => WeatherRepository(const String.fromEnvironment('WEATHER_API_KEY')));
+  GetIt.I.registerLazySingleton(
+    () => WeatherRepository(
+      const String.fromEnvironment('WEATHER_API_KEY'),
+    ),
+  );
 
   // Register view model
-  di.registerLazySingleton(() => WeatherViewModel(di()));
+  GetIt.I.registerLazySingleton(() => WeatherViewModel(GetIt.I()));
 
   runApp(const WeatherApp());
 }

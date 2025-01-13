@@ -11,7 +11,7 @@ class WeatherPage extends StatelessWidget with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = di<WeatherViewModel>();
+    final viewModel = GetIt.I<WeatherViewModel>();
     final isLoading = watchPropertyValue((WeatherViewModel vm) => vm.isLoading);
     final weather = watchPropertyValue((WeatherViewModel vm) => vm.weather);
 
