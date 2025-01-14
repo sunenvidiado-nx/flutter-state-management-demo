@@ -45,8 +45,8 @@ mixin _$WeatherStore on _WeatherStore, Store {
       AsyncAction('_WeatherStore.fetchWeather', context: context);
 
   @override
-  Future<void> fetchWeather(String newCity) {
-    return _$fetchWeatherAsyncAction.run(() => super.fetchWeather(newCity));
+  Future<void> fetchWeather(String location) {
+    return _$fetchWeatherAsyncAction.run(() => super.fetchWeather(location));
   }
 
   @override

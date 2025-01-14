@@ -18,10 +18,10 @@ abstract class _WeatherStore with Store {
   bool isLoading = false;
 
   @action
-  Future<void> fetchWeather(String newCity) async {
+  Future<void> fetchWeather(String location) async {
     isLoading = true;
     try {
-      weather = await _repository.getWeather(newCity);
+      weather = await _repository.getWeather(location);
     } finally {
       isLoading = false;
     }
